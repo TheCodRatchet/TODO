@@ -2,9 +2,26 @@
 
 require_once 'vendor/autoload.php';
 
+session_start();
+
 $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
-    $r->addRoute(["GET", "POST"], '/create', 'ActionCreate');
-    $r->addRoute("GET", '/', 'ActionShow');
+    $r->addRoute('GET', '/', 'ActionsController@index');
+
+    $r->addRoute('GET', '/actions', 'ActionsController@index');
+    $r->addRoute('GET', '/actions/create', 'ActionsController@create');
+    $r->addRoute('POST', '/actions', 'ActionsController@store');
+    $r->addRoute('POST', '/actions/{id}', 'ActionsController@delete');
+    $r->addRoute('GET', '/actions/{id}', 'ActionsController@show');
+
+    $r->addRoute('GET', '/users', 'UsersController@index');
+
+    $r->addRoute('GET', '/register', 'AuthController@showRegisterForm');
+    $r->addRoute('POST', '/register', 'AuthController@register');
+
+    $r->addRoute('GET', '/login', 'AuthController@showLoginForm');
+    $r->addRoute('POST', '/login', 'AuthController@login');
+
+    $r->addRoute('POST', '/logout', 'AuthController@logout');
 });
 
 $httpMethod = $_SERVER['REQUEST_METHOD'];
@@ -26,8 +43,9 @@ switch ($routeInfo[0]) {
         $handler = $routeInfo[1];
         $vars = $routeInfo[2];
 
-        $controller = "App\Controllers\\" . $handler;
+        [$controller, $method] = explode('@', $handler);
+        $controller = "App\Controllers\\" . $controller;
         $controller = new $controller();
-        $controller->index();
+        $controller->$method($vars);
         break;
 }
