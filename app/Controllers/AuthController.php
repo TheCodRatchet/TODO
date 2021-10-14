@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Redirect;
 use App\Repositories\users\MysqlUsersRepository;
 use App\Repositories\users\UsersRepository;
+use App\View;
 use Ramsey\Uuid\Uuid;
 
 class AuthController
@@ -19,9 +20,9 @@ class AuthController
     }
 
 
-    public function showRegisterForm()
+    public function showRegisterForm(): View
     {
-        require_once 'app/Views/users/register.template.php';
+        return new View('users/register.twig',[]);
     }
 
     public function register()
@@ -38,11 +39,11 @@ class AuthController
         Redirect::url('/');;
     }
 
-    public function showLoginForm()
+    public function showLoginForm(): View
     {
         if (Authorisation::loggedIn()) Redirect::url('/');
 
-        require_once 'app/Views/users/login.template.php';
+        return new View('users/login.twig', []);
     }
 
     public function login()
@@ -53,7 +54,7 @@ class AuthController
 
         if ($user !== null && password_verify($_POST['password'], $user->getPassword())) {
             $_SESSION['id'] = $user->getId();
-            header('Location: /actions');
+            Redirect::url('/');
             exit;
         }
 

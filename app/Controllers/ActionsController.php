@@ -8,6 +8,7 @@ use App\Repositories\actions\ActionsRepository;
 use App\Repositories\actions\CombinedActionsRepository;
 use App\Repositories\actions\CsvActionsRepository;
 use App\Repositories\actions\MysqlActionsRepository;
+use App\View;
 use Ramsey\Uuid\Uuid;
 
 class ActionsController
@@ -19,16 +20,18 @@ class ActionsController
         $this->actionsRepository = new CombinedActionsRepository();
     }
 
-    public function index()
+    public function index(): View
     {
         $actions = $this->actionsRepository->getAll($_GET);
 
-        require_once 'app/Views/actions/index.template.php';
+        return new View('actions/index.twig', [
+            'actions' => $actions
+        ]);
     }
 
-    public function create()
+    public function create(): View
     {
-        require_once 'app/Views/actions/create.template.php';
+        return new View('actions/create.twig', []);
     }
 
     public function store()
@@ -37,13 +40,13 @@ class ActionsController
 
         $this->actionsRepository->save($action);
 
-        Redirect::url('/actions');
+        Redirect::url('/');
     }
 
     public function delete(array $vars)
     {
         $id = $vars['id'] ?? null;
-        if ($id == null) Redirect::url('/');;
+        if ($id == null) Redirect::url('/');
 
         $action = $this->actionsRepository->getOne($id);
 
@@ -54,7 +57,7 @@ class ActionsController
         Redirect::url('/');
     }
 
-    public function show(array $vars)
+    public function show(array $vars): View
     {
         $id = $vars['id'] ?? null;
         if ($id == null) Redirect::url('/');;
@@ -63,6 +66,8 @@ class ActionsController
 
         if ($action === null) Redirect::url('/');;
 
-        require_once 'app/Views/actions/show.template.php';
+        return new View('actions/show.twig', [
+            'action' => $action
+        ]);
     }
 }

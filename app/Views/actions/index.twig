@@ -1,0 +1,13 @@
+{% extends 'app.twig' %}
+{% block content %}
+<h1>Tasks</h1> (<a href="/actions/create">Create</a>)
+<ul>
+    {% for action in actions.actions %}
+        <li>
+            <a href="/actions/{{ action.id }} ?>">
+                {{ action.name }}
+            </a>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}

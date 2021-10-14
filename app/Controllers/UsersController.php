@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Repositories\users\MysqlUsersRepository;
 use App\Repositories\users\UsersRepository;
+use App\View;
 
 class UsersController
 {
@@ -14,10 +15,12 @@ class UsersController
         $this->usersRepository = new MysqlUsersRepository();
     }
 
-    public function index()
+    public function index(): View
     {
         $users = $this->usersRepository->getAll();
 
-        require_once 'app/Views/users/index.template.php';
+        return new View('users/index.twig', [
+            'users' => $users
+        ]);
     }
 }

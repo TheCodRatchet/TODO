@@ -6,6 +6,6 @@ class Redirect
 {
     public static function url(string $url)
     {
-        header("Location; $url");
+        header("Location: $url");
     }
 }
